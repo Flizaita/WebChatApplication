@@ -1,0 +1,156 @@
+ 
+   body {
+    background-color: #fbffcb;
+    overflow: auto;
+}
+  .BlockHello{
+    position:absolute;
+    left: 28%;
+    top: 1%;
+ 	border: solid 1px #7E2199; 
+ 	background: #e1ffcb;
+	width: 60%;
+	height: 15%;
+	border-radius: 15px; 
+	color: #2E1572; 
+    font-size: 14pt;
+    font-family: Georgia, Times, serif; 
+    font-weight: normal;
+  }
+   .BlockLogin{
+    background: #e1ffcb;
+    position:absolute;
+    left: 1%;
+    top: 1%;
+	border: solid 1px #7E2199;
+	height: 15%;
+	width: 25%;
+	border-radius: 0 10px;
+   }
+   
+   .ButtonLogin{
+    position:absolute;
+    left: 20%;
+    top: 70%;
+   }
+   
+    #TextHi{
+    color: #2E1572; 
+    font-size: 14pt;
+    font-family: Georgia, Times, serif; 
+	position:absolute;
+    left: 20%;
+    top: -10%;
+   }
+   
+   #TextLogin{
+    position:absolute;
+    left: 20%;
+    top: 40%;
+   }
+   .ChangeLogin{
+    color: #7E2199;
+    position:absolute;
+    left: 50%;
+    top: 70%;
+   }
+   
+   .BlockUser, .Interlocutor{
+    background: rgba(174,221,148,0.6);
+	font-size: 16pt;
+	font-family: Georgia, Times; 
+	font-weight: bold;
+	text-align: center;
+	border: solid 1px #7E2199;
+	border-radius: 0 10px;
+	position:absolute;
+	color: #3d0721;
+    left: 1%;
+	height: 10%;
+	width: 25%;
+   }
+   
+   .BlockUser {
+    background: #c9c9ff;
+    top: 30%;
+   }
+   .Interlocutor{
+	background: #f1cbff;
+    top: 50%;
+   }
+   
+    .BlockChatting{
+	background: #e1ffcb;
+    position:absolute;
+    left: 28%;
+    top: 18%;
+	border: solid 1px #7E2199;
+	height: 70%;
+	width: 70%;
+	color:  #2E1572;
+	font-size: 14pt;
+    font-family: Georgia, Times, serif; 
+	overflow: scroll;
+   }
+
+   #ChatText{
+    position:absolute;
+	top: 90%;
+	left: 28%;
+   }
+   
+   .ButtonSend{
+   position:absolute;
+   left: 92%;
+	top: 90%;
+   }
+   
+   .TextForUser{
+    position:absolute;
+    left: 1%;
+    top: 90%;
+	background:  #e1ffcb;
+	border: solid 1px #7E2199;
+	height: 6%;
+	width: 25%;
+	border-radius: 10px 0;
+	color: #2E1572;
+	font-size: 14pt;
+   }
+   
+   #TextChoose{
+    position:absolute;
+    left: 5%;
+    top: -30%;
+   }
+   
+   #Indicator{
+    position:absolute;
+    left: 90%;
+    top: 1%;
+	height:16%;
+	width:8%;
+   }
+   
+   .Message{
+    width: 70%;
+    border: solid 1px #7E2199;
+   	background: rgba(194,56,235,0.5);
+   }
+   
+   .Select{
+    background:  #efbbff;
+   }
+   
+   .Delete{
+    background-color: RED;
+    float: right;
+	border-color: RED;
+   }
+   
+   .Change{
+    background-color: ORANGE;
+    float: right;
+	border-color: ORANGE;
+   }
+   
