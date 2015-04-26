@@ -134,10 +134,10 @@ public final class XMLHistoryUtil {
 		}
 	}
 
-	public static synchronized String doesStorageExist() {
-		File file = new File(STORAGE_LOCATION);
-		return Boolean.toString(file.exists());
-	}
+	public static synchronized boolean doesStorageExist() {
+        File file = new File(STORAGE_LOCATION);
+        return file.exists();
+    }
 
 	public static synchronized List<Message> getMessages() throws SAXException,
 			IOException, ParserConfigurationException {

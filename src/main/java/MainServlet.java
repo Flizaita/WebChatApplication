@@ -94,8 +94,11 @@ public class MainServlet extends HttpServlet {
 
 	private void loadHistory() throws SAXException, IOException,
 			ParserConfigurationException, TransformerException {
-		if (Boolean.getBoolean(XMLHistoryUtil.doesStorageExist())) {
+		if (XMLHistoryUtil.doesStorageExist()) {
 			MessageStorage.addAll(XMLHistoryUtil.getMessages());
+			System.out.println("Messages from History.xml:");
+			MessageStorage.printMessages();
+			System.out.println("End of messages from History.xml:");
 		} else {
 			XMLHistoryUtil.createStorage();
 		}
