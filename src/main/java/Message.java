@@ -3,12 +3,15 @@ public class Message {
 	private String text;
 	private String author;
 	private String date;
+	private String deleted;
+	
 
-	public Message(String id, String text, String author, String date) {
+	public Message(String id, String text, String author, String date, String deleted) {
 		this.id = id;
 		this.text = text;
 		this.author = author;
 		this.date = date;
+		this.deleted = deleted;
 	}
 
 	public String getId() {
@@ -42,10 +45,18 @@ public class Message {
 	public void setDate(String date) {
 		this.date = date;
 	}
+	
+	public String getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(String deleted) {
+		this.deleted = deleted;
+	}
 
 	public String toString() {
 		return "{\"id\":\"" + this.id + "\",\"author\":\"" + this.author
-				+ "\",\"text\":\"" + this.text + "\",\"date\":\"" + this.date
+				+ "\",\"text\":\"" + this.text + "\",\"date\":\"" + this.date + "\",\"deleted\":\"" + this.deleted
 				+ "\"}";
 	}
 }

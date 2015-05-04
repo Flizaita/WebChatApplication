@@ -27,13 +27,7 @@ public class MainServlet extends HttpServlet {
 	public void init() throws ServletException {
 		try {
 			loadHistory();
-		} catch (SAXException e) {
-			System.out.print("ERROR");
-		} catch (IOException e) {
-			System.out.print("ERROR");
-		} catch (ParserConfigurationException e) {
-			System.out.print("ERROR");
-		} catch (TransformerException e) {
+		} catch (Exception e) {
 			System.out.print("ERROR");
 		}
 	}
@@ -53,17 +47,9 @@ public class MainServlet extends HttpServlet {
 			XMLHistoryUtil.addData(message);
 			System.out.println(message.getDate() + " " + message.getText());
 			response.setStatus(HttpServletResponse.SC_OK);
-		} catch (SAXException e) {
+		} catch (Exception e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		} catch (IOException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		} catch (ParserConfigurationException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		} catch (TransformerException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		} catch (ParseException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		}
+		} 
 
 	}
 
@@ -83,7 +69,23 @@ public class MainServlet extends HttpServlet {
 					"'token' parameter needed");
 		}
 	}
-
+	
+	protected void doDelete(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		    String data = ServletUtil.getMessageBody(request);
+		  try{
+			JSONObject json = stringToJson(data);
+		    String id = (String)json.get(MessageUtil.ID);
+		    MessageStorage.deleteMessageById(id);
+		    XMLHistoryUtil.deleteData(id);
+		    System.out.println("Delete is done:  id " + id);
+		    response.setStatus(HttpServletResponse.SC_OK);
+		  }catch(Exception e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			} 
+		    
+	}
+	
 	@SuppressWarnings("unchecked")
 	private String formResponse(int index) {
 		JSONObject jsonObject = new JSONObject();

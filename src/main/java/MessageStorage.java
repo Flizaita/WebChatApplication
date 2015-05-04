@@ -43,6 +43,17 @@ public final class MessageStorage {
 		return null;
 	}
 
+	public static boolean deleteMessageById(String id) {
+	
+		for(Message message : INSTANSE){
+			if (message.getId().equals(id)){
+				message.setText(message.getAuthor()+ ": Message was deleted");
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static void printMessages() {
 		for (Message message : INSTANSE) {
 			System.out.println(message.getDate() + " " + message.getText());

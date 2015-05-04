@@ -7,9 +7,10 @@ public final class MessageUtil {
 	public static final String MESSAGES = "messages";
 	private static final String TN = "TN";
 	private static final String EN = "EN";
-	private static final String ID = "id";
-	private static final String TEXT = "text";
-	private static final String AUTHOR = "author";
+	public static final String ID = "id";
+	public static final String TEXT = "text";
+	public static final String AUTHOR = "author";
+	public static final String DELETED = "deleted";
 
 	private MessageUtil() {
 	}
@@ -32,10 +33,11 @@ public final class MessageUtil {
 		Object id = json.get(ID);
 		Object text = json.get(TEXT);
 		Object author = json.get(AUTHOR);
+		Object deleted = json.get(DELETED);
 
 		if (id != null && text != null && author != null) {
 			return new Message((String) id, (String) text, (String) author,
-					date);
+					date, (String)deleted);
 		}
 		return null;
 	}

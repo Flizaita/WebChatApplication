@@ -34,6 +34,7 @@ public final class XMLHistoryUtil {
 	private static final String TEXT = "text";
 	private static final String AUTHOR = "author";
 	private static final String DATE = "date";
+	private static final String DELETED = "deleted";
 
 	private XMLHistoryUtil() {
 	}
@@ -83,6 +84,10 @@ public final class XMLHistoryUtil {
 		Element date = document.createElement(DATE);
 		date.appendChild(document.createTextNode(message.getDate()));
 		messageElement.appendChild(date);
+		
+		Element deleted = document.createElement(DELETED);
+		deleted.appendChild(document.createTextNode(message.getDeleted()));
+		messageElement.appendChild(deleted);
 
 		DOMSource source = new DOMSource(document);
 
@@ -92,6 +97,31 @@ public final class XMLHistoryUtil {
 		transformer.transform(source, result);
 	}
 
+	public static synchronized void deleteData(String id)
+			throws ParserConfigurationException, SAXException, IOException,
+			TransformerException,XPathExpressionException {
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+				.newInstance();
+		DocumentBuilder documentBuilder = documentBuilderFactory
+				.newDocumentBuilder();
+		Document document = documentBuilder.parse(STORAGE_LOCATION);
+		document.getDocumentElement().normalize();
+		Node messageToDelete = getNodeById(document, id);
+		if (messageToDelete != null) {
+			messageToDelete.getParentNode().removeChild(messageToDelete);
+
+			Transformer transformer = getTransformer();
+
+			DOMSource source = new DOMSource(document);
+			StreamResult result = new StreamResult(new File(STORAGE_LOCATION));
+			transformer.transform(source, result);
+			
+		} else {
+			throw new NullPointerException();
+		}
+		
+	}
+	
 	public static synchronized void updateData(Message message)
 			throws ParserConfigurationException, SAXException, IOException,
 			TransformerException, XPathExpressionException {
@@ -159,7 +189,9 @@ public final class XMLHistoryUtil {
 					.getTextContent();
 			String date = messageElement.getElementsByTagName(DATE).item(0)
 					.getTextContent();
-			messages.add(new Message(id, text, author, date));
+			String deleted = messageElement.getElementsByTagName(DELETED).item(0)
+					.getTextContent();
+			messages.add(new Message(id, text, author, date,deleted));
 		}
 		return messages;
 	}
