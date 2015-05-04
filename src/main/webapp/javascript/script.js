@@ -97,7 +97,7 @@
 		var newMsg = theMessage(name+": "+getMessage(), name);
 		list.push(newMsg);
 		var message = createMessage(name+": "+getMessage(), newMsg.id);
-		chat.appendChild(message);
+		/*chat.appendChild(message);*/
 		document.getElementById('ChatText').value='';
 		addMessageServer(newMsg);
 		}
@@ -179,7 +179,7 @@
 		    }
 		    if(appState.msgList[i].deleted == "false"){
 			messages[0].innerHTML = '<div data-id=' + appState.msgList[i].id+'><button class="Delete"></button><button class="Change"></button>'
-			+appState.msgList[i].user+': Message deleted</div>';
+			+appState.msgList[i].author+': Message was deleted</div>';
 		    messages[0].classList.remove('Select');
 			appState.msgList[i].deleted = "true";
 			deleteMessageServer(id);
@@ -345,6 +345,7 @@
 	}
 
 	function restores(continueWith) {
+		function poll() {
 		var url = appState.mainUrl + '?token=' + appState.token;
 
 		get(url, function(responseText) {
@@ -354,9 +355,15 @@
 
 			appState.token = response.token;
 			createAllMsg(response.messages);
-			continueWith && continueWith();
+			setTimeout(poll, 1000);
+		}, function(error) {
+			defaultErrorHandler(error);
+			setTimeout(poll, 1000);
 		});
 	}
+
+	poll();
+}
 
 	function defaultErrorHandler(message) {
 		console.error(message);
