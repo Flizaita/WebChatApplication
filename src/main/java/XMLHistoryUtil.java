@@ -122,7 +122,7 @@ public final class XMLHistoryUtil {
 		
 	}
 	
-	public static synchronized void updateData(Message message)
+	public static synchronized void updateData(String text, String id)
 			throws ParserConfigurationException, SAXException, IOException,
 			TransformerException, XPathExpressionException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
@@ -131,7 +131,7 @@ public final class XMLHistoryUtil {
 				.newDocumentBuilder();
 		Document document = documentBuilder.parse(STORAGE_LOCATION);
 		document.getDocumentElement().normalize();
-		Node messageToUpdate = getNodeById(document, message.getId());
+		Node messageToUpdate = getNodeById(document, id);
 
 		if (messageToUpdate != null) {
 
@@ -142,14 +142,7 @@ public final class XMLHistoryUtil {
 				Node node = childNodes.item(i);
 
 				if (TEXT.equals(node.getNodeName())) {
-					node.setTextContent(message.getText());
-				}
-
-				if (AUTHOR.equals(node.getNodeName())) {
-					node.setTextContent(message.getAuthor());
-				}
-				if (DATE.equals(node.getNodeName())) {
-					node.setTextContent(message.getDate());
+					node.setTextContent(text);
 				}
 
 			}

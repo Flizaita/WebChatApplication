@@ -311,13 +311,16 @@
 		xhr.onload = function () {
 			if (xhr.readyState !== 4)
 				return;
-
-			if(xhr.status != 200) {
+			
+			if( xhr.status == 304 ){
+				console.log("not_mofidied");
+				}
+			if(xhr.status != 200 ) {
 				continueWithError('Error on the server side, response ' + xhr.status);
 				return;
 			}
 
-			if(isError(xhr.responseText)) {
+			if(isError(xhr.responseText) ) {
 				continueWithError('Error on the server side, response ' + xhr.responseText);
 			    changeIndicatorOff();
 				return;

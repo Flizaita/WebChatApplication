@@ -6,7 +6,6 @@ import java.util.List;
 public final class MessageStorage {
 	private static final List<Message> INSTANSE = Collections
 			.synchronizedList(new ArrayList<Message>());
-
 	private MessageStorage() {
 	}
 
@@ -59,4 +58,5 @@ public final class MessageStorage {
 			System.out.println(message.getDate() + " " + message.getText());
 		}
 	}
+
 }

@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,26 +17,33 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.xml.sax.SAXException;
+import org.apache.log4j.PropertyConfigurator;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
 @WebServlet("/WebChat")
 public class MainServlet extends HttpServlet {
+    
+	private static Logger logger = Logger.getLogger(MainServlet.class.getName());
+    private boolean modified = false;
 
+ 
+	
 	@Override
 	public void init() throws ServletException {
 		try {
 			loadHistory();
+			modified = true;
 		} catch (Exception e) {
-			System.out.print("ERROR");
+			logger.error(e);
 		}
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-
+		logger.info("doPost");
 		String data = ServletUtil.getMessageBody(request);
 		Date date = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
@@ -45,7 +53,8 @@ public class MainServlet extends HttpServlet {
 					format.format(date));
 			MessageStorage.addMessage(message);
 			XMLHistoryUtil.addData(message);
-			System.out.println(message.getDate() + " " + message.getText());
+			modified = true;
+			logger.info(message.getDate() + " " + message.getText());
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -56,32 +65,65 @@ public class MainServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String token = request.getParameter("token");
-
+		logger.info("doGet");
+		logger.info("Token " + token);
 		if (token != null && !"".equals(token)) {
 			int index = MessageUtil.getIndex(token);
+			if(modified == true){
 			String messages = formResponse(index);
 			response.setContentType(ServletUtil.APPLICATION_JSON);
 			PrintWriter out = response.getWriter();
 			out.print(messages);
 			out.flush();
+			modified = false;
+			}
+			else
+				{
+				response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+				logger.info("response status: 304");
+				}
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					"'token' parameter needed");
+			logger.error("BAD REQUEST");
 		}
 	}
 	
 	protected void doDelete(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		    String data = ServletUtil.getMessageBody(request);
+		    logger.info("doDelete");
 		  try{
 			JSONObject json = stringToJson(data);
 		    String id = (String)json.get(MessageUtil.ID);
 		    MessageStorage.deleteMessageById(id);
 		    XMLHistoryUtil.deleteData(id);
-		    System.out.println("Delete is done:  id " + id);
+		    modified = true;
+		    logger.info("Delete is done: message id " + id);
 		    response.setStatus(HttpServletResponse.SC_OK);
 		  }catch(Exception e) {
 				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+				 logger.error(e);
+			} 
+		    
+	}
+	
+	protected void doPut(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		    String data = ServletUtil.getMessageBody(request);
+		    logger.info("doPut");
+		  try{
+			JSONObject json = stringToJson(data);
+		    String id = (String)json.get(MessageUtil.ID);
+		    String text = (String)json.get(MessageUtil.TEXT);
+		    MessageStorage.getMessageById(id).setText(text);
+		    XMLHistoryUtil.updateData(text, id);
+		    modified = true;
+		    System.out.println("Put is done: message  id " + id + " new text: " + text);
+		    response.setStatus(HttpServletResponse.SC_OK);
+		  }catch(Exception e) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+				 logger.error(e);
 			} 
 		    
 	}
