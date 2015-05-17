@@ -1,0 +1,1 @@
+SELECT * FROM messages WHERE date LIKE '15-05-02%' AND user_id=1;
