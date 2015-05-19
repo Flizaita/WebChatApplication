@@ -29,7 +29,7 @@ public final class MessageUtil {
 		return (JSONObject) parser.parse(data.trim());
 	}
 
-	public static Message jsonToMessage(JSONObject json, String date) {
+	public static Message jsonToMessage(JSONObject json, String date, String request) {
 		Object id = json.get(ID);
 		Object text = json.get(TEXT);
 		Object author = json.get(AUTHOR);
@@ -37,7 +37,7 @@ public final class MessageUtil {
 
 		if (id != null && text != null && author != null) {
 			return new Message((String) id, (String) text, (String) author,
-					date, (String)deleted);
+					date, (String)deleted, request);
 		}
 		return null;
 	}

@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 public class MainServlet extends HttpServlet {
     
 	private static Logger logger = Logger.getLogger(MainServlet.class.getName());
-    private boolean modified = false;
 
  
 	
@@ -34,7 +33,6 @@ public class MainServlet extends HttpServlet {
 	public void init() throws ServletException {
 		try {
 			loadHistory();
-			modified = true;
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -50,10 +48,9 @@ public class MainServlet extends HttpServlet {
 		try {
 			JSONObject json = stringToJson(data);
 			Message message = MessageUtil.jsonToMessage(json,
-					format.format(date));
+					format.format(date), "POST");
 			MessageStorage.addMessage(message);
 			XMLHistoryUtil.addData(message);
-			modified = true;
 			logger.info(message.getDate() + " " + message.getText());
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
@@ -69,19 +66,16 @@ public class MainServlet extends HttpServlet {
 		logger.info("Token " + token);
 		if (token != null && !"".equals(token)) {
 			int index = MessageUtil.getIndex(token);
-			if(modified == true){
+			if(MessageStorage.getSubMessagesByIndex(index).size() != 0){
 			String messages = formResponse(index);
 			response.setContentType(ServletUtil.APPLICATION_JSON);
 			PrintWriter out = response.getWriter();
 			out.print(messages);
 			out.flush();
-			modified = false;
 			}
-			else
-				{
-				response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-				logger.info("response status: 304");
-				}
+			else {
+				response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);	
+			}
 		} else {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					"'token' parameter needed");
@@ -96,9 +90,12 @@ public class MainServlet extends HttpServlet {
 		  try{
 			JSONObject json = stringToJson(data);
 		    String id = (String)json.get(MessageUtil.ID);
-		    MessageStorage.deleteMessageById(id);
+		    Message message = new Message();
+		    message.setId(id);
+		    message.setRequest("DELETE");
+		    message.setDeleted((String)json.get(MessageUtil.DELETED));
 		    XMLHistoryUtil.deleteData(id);
-		    modified = true;
+			MessageStorage.addMessage(message);
 		    logger.info("Delete is done: message id " + id);
 		    response.setStatus(HttpServletResponse.SC_OK);
 		  }catch(Exception e) {
@@ -116,9 +113,12 @@ public class MainServlet extends HttpServlet {
 			JSONObject json = stringToJson(data);
 		    String id = (String)json.get(MessageUtil.ID);
 		    String text = (String)json.get(MessageUtil.TEXT);
-		    MessageStorage.getMessageById(id).setText(text);
+		    Message message = new Message();
+		    message.setId(id);
+		    message.setRequest("PUT");
+		    message.setText(text);
+			MessageStorage.addMessage(message);
 		    XMLHistoryUtil.updateData(text, id);
-		    modified = true;
 		    System.out.println("Put is done: message  id " + id + " new text: " + text);
 		    response.setStatus(HttpServletResponse.SC_OK);
 		  }catch(Exception e) {

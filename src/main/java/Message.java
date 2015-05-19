@@ -4,14 +4,26 @@ public class Message {
 	private String author;
 	private String date;
 	private String deleted;
+	private String request;
 	
-
-	public Message(String id, String text, String author, String date, String deleted) {
+	public Message(){
+		
+		this.id = "-1";
+		this.author = "";
+		this.text = "";
+		this.date = "";
+		this.deleted = "false";
+		this.request = "";
+		
+	}
+	
+	public Message(String id, String text, String author, String date, String deleted, String request) {
 		this.id = id;
 		this.text = text;
 		this.author = author;
 		this.date = date;
 		this.deleted = deleted;
+		this.request = request;
 	}
 
 	public String getId() {
@@ -53,10 +65,18 @@ public class Message {
 	public void setDeleted(String deleted) {
 		this.deleted = deleted;
 	}
+	
+	public String getRequest() {
+		return deleted;
+	}
+
+	public void setRequest(String request) {
+		this.request = request;
+	}
 
 	public String toString() {
 		return "{\"id\":\"" + this.id + "\",\"author\":\"" + this.author
-				+ "\",\"text\":\"" + this.text + "\",\"date\":\"" + this.date + "\",\"deleted\":\"" + this.deleted
-				+ "\"}";
+				+ "\",\"text\":\"" + this.text + "\",\"date\":\"" + this.date + "\",\"deleted\":\"" + this.deleted + 
+				"\",\"request\":\"" + this.request + "\"}";
 	}
 }

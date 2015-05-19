@@ -47,6 +47,7 @@ public final class MessageStorage {
 		for(Message message : INSTANSE){
 			if (message.getId().equals(id)){
 				message.setText(message.getAuthor()+ ": Message was deleted");
+				message.setDeleted("true");
 				return true;
 			}
 		}

@@ -16,7 +16,7 @@
 			text:t,
 			author: name,
 			id: uniqueId(),
-			deleted: "false"
+			deleted: "false",
 		};
 	};
 
@@ -52,13 +52,12 @@
 
 
 	function delegateEvent(evtObj) {
-	if (evtObj.type === 'click'  && evtObj.target.classList.contains('ButtonSend') && document.getElementsByClassName('Select').length == 0)
-		{
-			addMessage();
-		}
-		if (evtObj.type === 'click' && evtObj.target.classList.contains('ButtonLogin') && document.getElementsByClassName('Select').length == 0)
+	if (evtObj.type === 'click'  && evtObj.target.classList.contains('ButtonSend') && document.getElementsByClassName('Select').length == 0) 
+		addMessage();
+			
+	if (evtObj.type === 'click' && evtObj.target.classList.contains('ButtonLogin') && document.getElementsByClassName('Select').length == 0)
 			addUser(getUserName());
-		if (evtObj.type === 'click' && evtObj.target.classList.contains('ChangeLogin') && document.getElementsByClassName('Select').length == 0)
+	if (evtObj.type === 'click' && evtObj.target.classList.contains('ChangeLogin') && document.getElementsByClassName('Select').length == 0)
 			changeUserName();
 		var container = document.getElementsByClassName('Select');
 		if (evtObj.type === 'click' && evtObj.target.classList.contains('ButtonLogin') && container.length>0) 
@@ -68,7 +67,7 @@
 		{
 			var label = evtObj.target.parentElement;
 		    setMarker(label);	
-			deleteMessage();
+			deleteMessageServer(getMessageId());
 		}
 		if (evtObj.type === 'click' && evtObj.target.classList.contains('Change'))
 		{
@@ -77,17 +76,17 @@
 			editMessage();
 		}
 		if (evtObj.type === 'click' && evtObj.target.classList.contains('ButtonSend') && container.length>0)
-			nextEditMessage();
+			editMessageServer(getMessageId(), appState.currentUser + ": " + getMessage());
 	}
 
-	function createMessage(text, id){
+	function createMessage(text, id) {
 		var divItem = document.createElement('div');
-		divItem.innerHTML = '<div data-id=' + id+'><button class="Delete"></button><button class="Change"></button>'+text+'</div>';
+		divItem.innerHTML = '<div id=' + id+'><button class="Delete"></button><button class="Change"></button>'+text+'</div>';
 		return divItem;
 	}
 
-	function addMessage()
-	{   
+	
+	function addMessage() {   
 		var name = appState.currentUser;
 	    var list = appState.msgList;
 		if(getMessage().length!=0 )
@@ -97,7 +96,6 @@
 		var newMsg = theMessage(name+": "+getMessage(), name);
 		list.push(newMsg);
 		var message = createMessage(name+": "+getMessage(), newMsg.id);
-		/*chat.appendChild(message);*/
 		document.getElementById('ChatText').value='';
 		addMessageServer(newMsg);
 		}
@@ -165,10 +163,18 @@
 			label.classList.remove('Select');
 		else label.classList.add('Select');
 	}
-	function deleteMessage()
-	{
+	
+	function getMessageId() {
+		
 		var messages = document.getElementsByClassName('Select');
-		var id = messages[0].getAttribute('data-id');
+		var id = messages[0].getAttribute('id');
+		return id;
+	}
+	
+	function deleteMessage(id) {
+	
+		var msg = document.getElementById(id);
+		
 		for(var i = 0; i < appState.msgList.length; i++){
 			if(appState.msgList[i].id != id)
 				continue;
@@ -176,18 +182,17 @@
 				  messages[0].classList.remove('Select');
 			      alert("Сообщение удалено!");
 			      return;
-		    }
+		    }	
+			
 		    if(appState.msgList[i].deleted == "false"){
-			messages[0].innerHTML = '<div data-id=' + appState.msgList[i].id+'><button class="Delete"></button><button class="Change"></button>'
+		    msg.innerHTML = '<div id=' + appState.msgList[i].id+'><button class="Delete"></button><button class="Change"></button>'
 			+appState.msgList[i].author+': Message was deleted</div>';
-		    messages[0].classList.remove('Select');
+		    msg.classList.remove('Select');
 			appState.msgList[i].deleted = "true";
-			deleteMessageServer(id);
 		    }
 		else{
-		deleteMessageServer(id);
 		appState.msgList.splice(i,1);
-		messages[0].remove();
+		msg.remove();
 		}
 		}
 	}
@@ -205,7 +210,7 @@
 	function editMessage()
 	{
 		var messages = document.getElementsByClassName('Select');
-		var id = messages[0].getAttribute('data-id');
+		var id = messages[0].getAttribute('id');
 		for(var i = 0; i < appState.msgList.length; i++){
 			if(appState.msgList[i].id == id){
 				if(appState.msgList[i].deleted == "true"){
@@ -222,18 +227,19 @@
 	   
 	}
 
-	function nextEditMessage(){
-		var messages = document.getElementsByClassName('Select');
-	    var id = messages[0].getAttribute('data-id');
+	function nextEditMessage(id, text){
+		
+		var msg = document.getElementById(id);
+		
 		for(var i = 0; i < appState.msgList.length; i++){
 			if(appState.msgList[i].id != id)
 				continue;
-			appState.msgList[i].text = appState.msgList[i].author+":"+getMessage();
-			messages[0].innerHTML = '<div data-id=' + appState.msgList[i].id+'><button class="Delete"></button><button class="Change"></button>'+appState.msgList[i].text+'</div>';
-			editMessageServer(appState.msgList[i].id,appState.msgList[i].text);
+			
+			appState.msgList[i].text = text;
+			msg.innerHTML = '<div id=' + appState.msgList[i].id+'><button class="Delete"></button><button class="Change"></button>'+appState.msgList[i].text+'</div>';
 		}
 		document.getElementById('ChatText').value='';
-		messages[0].classList.remove('Select');
+		msg.classList.remove('Select');
 	}
 
 	function editMessageServer(id, newMsg){
@@ -313,7 +319,7 @@
 				return;
 			
 			if( xhr.status == 304 ){
-				console.log("not_mofidied");
+				console.log("not modified");
 				}
 			if(xhr.status != 200 ) {
 				continueWithError('Error on the server side, response ' + xhr.status);
@@ -357,7 +363,21 @@
 			var response = JSON.parse(responseText);
 
 			appState.token = response.token;
-			createAllMsg(response.messages);
+			var messages = response.messages;
+			
+			for (var i = 0; i < messages.length; i++) {
+				
+				if (messages[i].request == "POST") {
+					addRestoringInformation(messages[i]);
+				}
+				else if (messages[i].request == "DELETE") {
+					deleteMessage(messages[i].id);
+					
+				} else if (messages[i].request == "PUT") {
+					nextEditMessage(messages[i].id,messages[i].text);
+				}
+			}
+			
 			setTimeout(poll, 1000);
 		}, function(error) {
 			defaultErrorHandler(error);

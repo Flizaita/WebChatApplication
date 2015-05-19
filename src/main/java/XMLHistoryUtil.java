@@ -184,7 +184,7 @@ public final class XMLHistoryUtil {
 					.getTextContent();
 			String deleted = messageElement.getElementsByTagName(DELETED).item(0)
 					.getTextContent();
-			messages.add(new Message(id, text, author, date,deleted));
+			messages.add(new Message(id, text, author, date,deleted, "POST"));
 		}
 		return messages;
 	}
