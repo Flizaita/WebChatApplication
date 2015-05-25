@@ -26,12 +26,13 @@ import java.text.SimpleDateFormat;
 public class MainServlet extends HttpServlet {
     
 	private static Logger logger = Logger.getLogger(MainServlet.class.getName());
-
+    private MessagesDaoInterface messageDao;
  
 	
 	@Override
 	public void init() throws ServletException {
 		try {
+			this.messageDao = new MessagesDao();
 			loadHistory();
 		} catch (Exception e) {
 			logger.error(e);
@@ -40,7 +41,7 @@ public class MainServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+		HttpServletResponse response) throws ServletException, IOException {
 		logger.info("doPost");
 		String data = ServletUtil.getMessageBody(request);
 		Date date = new Date();
@@ -50,7 +51,7 @@ public class MainServlet extends HttpServlet {
 			Message message = MessageUtil.jsonToMessage(json,
 					format.format(date), "POST");
 			MessageStorage.addMessage(message);
-			XMLHistoryUtil.addData(message);
+			messageDao.add(message);
 			logger.info(message.getDate() + " " + message.getText());
 			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
@@ -94,7 +95,7 @@ public class MainServlet extends HttpServlet {
 		    message.setId(id);
 		    message.setRequest("DELETE");
 		    message.setDeleted((String)json.get(MessageUtil.DELETED));
-		    XMLHistoryUtil.deleteData(id);
+		    messageDao.delete(id);
 			MessageStorage.addMessage(message);
 		    logger.info("Delete is done: message id " + id);
 		    response.setStatus(HttpServletResponse.SC_OK);
@@ -118,7 +119,7 @@ public class MainServlet extends HttpServlet {
 		    message.setRequest("PUT");
 		    message.setText(text);
 			MessageStorage.addMessage(message);
-		    XMLHistoryUtil.updateData(text, id);
+		    messageDao.update(message);
 		    System.out.println("Put is done: message  id " + id + " new text: " + text);
 		    response.setStatus(HttpServletResponse.SC_OK);
 		  }catch(Exception e) {
@@ -138,14 +139,10 @@ public class MainServlet extends HttpServlet {
 
 	private void loadHistory() throws SAXException, IOException,
 			ParserConfigurationException, TransformerException {
-		if (XMLHistoryUtil.doesStorageExist()) {
-			MessageStorage.addAll(XMLHistoryUtil.getMessages());
-			System.out.println("Messages from History.xml:");
+			MessageStorage.addAll(messageDao.selectAll());
+			System.out.println("Messages from History:");
 			MessageStorage.printMessages();
 			System.out.println("End of messages from History.xml:");
-		} else {
-			XMLHistoryUtil.createStorage();
-		}
 	}
 
 	public static JSONObject stringToJson(String data) throws ParseException {
