@@ -17,6 +17,9 @@
 			author: name,
 			id: uniqueId(),
 			deleted: "false",
+			data: '',
+			request: ''
+			
 		};
 	};
 
@@ -63,14 +66,22 @@
 		if (evtObj.type === 'click' && evtObj.target.classList.contains('ButtonLogin') && container.length>0) 
 			changeUserNameFinal();
 			
-		if (evtObj.type === 'click' && evtObj.target.classList.contains('Delete'))
-		{
+		if (evtObj.type === 'click' && evtObj.target.classList.contains('Delete')) {
 			var label = evtObj.target.parentElement;
 		    setMarker(label);	
-			deleteMessageServer(getMessageId());
+		    var id = getMessageId();
+		    for(var i = 0; i < appState.msgList.length; i++){
+				if(appState.msgList[i].id != id)
+					continue;
+		    if(appState.msgList[i].author != appState.currentUser) {
+		    	setMarker(label);
+				alert("Вы не можете удалить это сообщение");
+			}
+		    else 
+			deleteMessageServer(id);
+		    }
 		}
-		if (evtObj.type === 'click' && evtObj.target.classList.contains('Change'))
-		{
+		if (evtObj.type === 'click' && evtObj.target.classList.contains('Change')){
 			var label = evtObj.target.parentElement;
 		    setMarker(label);	
 			editMessage();
@@ -174,7 +185,7 @@
 	function deleteMessage(id) {
 	
 		var msg = document.getElementById(id);
-		
+		var messages = document.getElementsByClassName('Select');
 		for(var i = 0; i < appState.msgList.length; i++){
 			if(appState.msgList[i].id != id)
 				continue;
@@ -206,13 +217,18 @@
 			console.log("DELETE is OK")
 		});
 	}
-
+	
 	function editMessage()
 	{
 		var messages = document.getElementsByClassName('Select');
 		var id = messages[0].getAttribute('id');
 		for(var i = 0; i < appState.msgList.length; i++){
 			if(appState.msgList[i].id == id){
+				if(appState.msgList[i].author != appState.currentUser) {
+					messages[0].classList.remove('Select');
+					alert("Вы не можете изменить это сообщение");
+					return;
+				}
 				if(appState.msgList[i].deleted == "true"){
 				  messages[0].classList.remove('Select');
 			      alert("Сообщение удалено!");
@@ -246,7 +262,8 @@
 		
 		var object = {
 			text: newMsg,
-			id: id
+			id: id,
+			author: appState.currentUser
 		}
 		put(appState.mainUrl, JSON.stringify(object), function(){
 			console.log("PUT IS OK")
