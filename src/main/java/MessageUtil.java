@@ -1,3 +1,5 @@
+import java.util.Date;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -29,7 +31,7 @@ public final class MessageUtil {
 		return (JSONObject) parser.parse(data.trim());
 	}
 
-	public static Message jsonToMessage(JSONObject json, String date, String request) {
+	public static Message jsonToMessage(JSONObject json, Date date, String request) {
 		Object id = json.get(ID);
 		Object text = json.get(TEXT);
 		Object author = json.get(AUTHOR);

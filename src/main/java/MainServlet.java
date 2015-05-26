@@ -45,11 +45,10 @@ public class MainServlet extends HttpServlet {
 		logger.info("doPost");
 		String data = ServletUtil.getMessageBody(request);
 		Date date = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
 		try {
 			JSONObject json = stringToJson(data);
 			Message message = MessageUtil.jsonToMessage(json,
-					format.format(date), "POST");
+					date, "POST");
 			MessageStorage.addMessage(message);
 			messageDao.add(message);
 			logger.info(message.getDate() + " " + message.getText());

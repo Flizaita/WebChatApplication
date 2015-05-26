@@ -1,8 +1,10 @@
+import java.util.Date;
+
 public class Message {
 	private String id;
 	private String text;
 	private String author;
-	private String date;
+	private Date date;
 	private String deleted;
 	private String request;
 	
@@ -11,13 +13,13 @@ public class Message {
 		this.id = "-1";
 		this.author = "";
 		this.text = "";
-		this.date = "";
+		this.date = null;
 		this.deleted = "false";
 		this.request = "";
 		
 	}
 	
-	public Message(String id, String text, String author, String date, String deleted, String request) {
+	public Message(String id, String text, String author, Date date, String deleted, String request) {
 		this.id = id;
 		this.text = text;
 		this.author = author;
@@ -50,11 +52,11 @@ public class Message {
 		this.author = author;
 	}
 
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 	
@@ -67,7 +69,7 @@ public class Message {
 	}
 	
 	public String getRequest() {
-		return deleted;
+		return request;
 	}
 
 	public void setRequest(String request) {

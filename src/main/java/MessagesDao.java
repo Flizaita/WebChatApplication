@@ -1,12 +1,13 @@
 
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
 
@@ -42,7 +43,7 @@ public class MessagesDao implements MessagesDaoInterface {
 			preparedStatement = connection.prepareStatement("INSERT INTO messages (id, text, date, user_id) VALUES (?, ?, ?, ?)");
 			preparedStatement.setLong(1, Long.parseLong(msg.getId()));
 			preparedStatement.setString(2, msg.getText());
-			preparedStatement.setString(3, msg.getDate());
+			preparedStatement.setTimestamp(3, new Timestamp(msg.getDate().getTime()));
 			preparedStatement.setLong(4, id);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
@@ -147,13 +148,13 @@ public class MessagesDao implements MessagesDaoInterface {
 		try {
 			connection = ConnectionManager.getConnection();
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT * FROM messages");
+			resultSet = statement.executeQuery("SELECT * FROM messages ORDER BY date");
 			while (resultSet.next()) {
 				long id = resultSet.getLong("id");
 				String text = resultSet.getString("text");
-				String date = resultSet.getString("date");
+				Date date = resultSet.getTimestamp("date");
 				String user = selectUserById(resultSet.getInt("user_id"));
-				messages.add(new Message(Long.toString(id),text,date, "false", user,"POST"));
+				messages.add(new Message(Long.toString(id),text, user, date, "false","POST"));
 			}
 		} catch (SQLException e) {
 			logger.error(e);
